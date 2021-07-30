@@ -1,0 +1,50 @@
+trigger:
+  tags:
+    include:
+      - v*
+  branches:
+    include:
+      - develop
+      - release*
+  paths:
+    exclude:
+      - README.md
+      - CHANGELOG.md
+      - LICENSE
+
+variables:
+  GOROOT: '/usr/local/go1.16'
+  GOPATH: '/tmp/go'
+  GOBIN:  '$(GOPATH)/bin'
+
+jobs:
+  - job: Test
+    pool:
+      vmImage: 'Ubuntu-18.04'
+
+    steps:
+      - script: |
+          mkdir -p '$(GOBIN)'
+          mkdir -p '$(GOPATH)/pkg'
+        displayName: 'Setup the Go workspace'
+
+      - task: GoTool@0
+        inputs:
+          version: '1.16'
+          goPath: $(GOPATH)
+          goBin: $(GOBIN)
+        displayName: 'Install Golang'
+
+      - script: |
+          set -e
+          PATH=$PATH:$(GOBIN)
+          make lint test
+        displayName: 'Lint and Unit Test'
+
+      - script: |
+          set -e
+          export CLOUD_URL="https://cloud.dev.deviceplane.com/api"
+          export USER_EMAIL="$(test.user.email)"
+          export USER_PW="$(test.user.pw)"
+          go test -mod=vendor test/... -v -parallel 1
+        displayName: 'Run Feature Tests'

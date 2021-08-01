@@ -46,5 +46,5 @@ jobs:
           export CLOUD_URL="https://cloud.dev.deviceplane.com/api"
           export USER_EMAIL="$(test.user.email)"
           export USER_PW="$(test.user.pw)"
-          go test test/... -v -parallel 1
+          go test ./test/... -v -parallel 1
         displayName: 'Run Feature Tests'

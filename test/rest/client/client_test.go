@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"math/rand"
 	"net/url"
 	"os"

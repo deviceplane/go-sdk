@@ -49,7 +49,7 @@ func TestNew(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to parse CLOUD_URL: %s", err.Error())
 	}
-	testClient := client.New(baseURL)
+	testClient = client.New(baseURL)
 	if testClient == nil {
 		t.Fatal("testClient is nil")
 	}

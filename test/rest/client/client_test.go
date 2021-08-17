@@ -14,7 +14,7 @@ var (
 	testClient *client.Client
 	password   string
 	email      string
-	project   string
+	project    string
 	projectID  string
 )
 
@@ -22,7 +22,7 @@ const (
 	company   = "Edgeworx"
 	firstName = "Test"
 	lastName  = "Testovich"
-	roleYAML = `rules:
+	roleYAML  = `rules:
 - resources:
   - '*'
   actions:
@@ -31,10 +31,10 @@ const (
 
 func randomString(n int) string {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyz")
-     
+
 	s := make([]rune, n)
 	for i := range s {
-	    s[i] = letters[rand.Intn(len(letters))]
+		s[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(s)
 }
@@ -79,13 +79,13 @@ func TestNew(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	email = os.Getenv("USER_EMAIL")
- 	if email == "" {
- 		t.Fatal("USER_EMAIL is not set")
- 	}
- 	password = os.Getenv("USER_PW")
- 	if password == "" {
- 		t.Fatal("USER_PW is not set")
- 	}
+	if email == "" {
+		t.Fatal("USER_EMAIL is not set")
+	}
+	password = os.Getenv("USER_PW")
+	if password == "" {
+		t.Fatal("USER_PW is not set")
+	}
 	err := testClient.Login(context.Background(), &client.LoginRequest{
 		Email:    email,
 		Password: password,
@@ -110,8 +110,8 @@ func TestCreateProject(t *testing.T) {
 func TestCreateRBACResources(t *testing.T) {
 	// Registration Token
 	tokenReq := client.RegistrationToken{
-		Name:             randomString(10),
-		Description:      "default",
+		Name:        randomString(10),
+		Description: "default",
 	}
 	tokenResp, err := testClient.CreateRegistrationToken(context.Background(), projectID, tokenReq)
 	if err != nil {
@@ -138,8 +138,8 @@ func TestCreateRBACResources(t *testing.T) {
 	}
 	// Role
 	roleReq := &client.RoleCreate{
-		Name:        randomString(10),
-		Config:      roleYAML,
+		Name:   randomString(10),
+		Config: roleYAML,
 	}
 	roleResp, err := testClient.CreateRole(context.Background(), projectID, roleReq)
 	if err != nil {
@@ -173,8 +173,8 @@ func TestCreateRBACResources(t *testing.T) {
 }
 
 func TestDeleteProject(t *testing.T) {
-	 err := testClient.DeleteProject(context.Background(), projectID)
-	 if err != nil {
-		 t.Errorf("Failed to delete project: %s", err.Error())
-	 }
+	err := testClient.DeleteProject(context.Background(), projectID)
+	if err != nil {
+		t.Errorf("Failed to delete project: %s", err.Error())
+	}
 }

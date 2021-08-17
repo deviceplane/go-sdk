@@ -29,19 +29,28 @@ type Client struct {
 	accessKey  string
 	httpClient *http.Client
 	cookie     string
+	privsToken string
 }
 
 func New(endpoint *url.URL) *Client {
 	return &Client{
 		url:        endpoint,
-		accessKey:  "", // TODO: Do we need this ever?
 		httpClient: http.DefaultClient,
 	}
 }
 
+func (c *Client) SetPrivilege(token string) {
+	c.privsToken = token
+}
+
 func (c *Client) CreateUser(ctx context.Context, user *UserCreate) (*User, error) {
 	var response User
-	if err := c.post(ctx, *user, &response, registerURL); err != nil {
+	reqURL := registerURL
+	if c.privsToken != "" {
+		queryParams := fmt.Sprintf("?autoregister=%s", c.privsToken)
+		reqURL = registerURL + queryParams
+	}
+	if err := c.post(ctx, *user, &response, reqURL); err != nil {
 		return nil, err
 	}
 	return &response, nil

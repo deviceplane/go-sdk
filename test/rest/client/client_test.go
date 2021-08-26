@@ -98,7 +98,7 @@ func TestLogin(t *testing.T) {
 }
 
 func TestCreateProject(t *testing.T) {
-	project = randomString(10)
+	project = randomString(30)
 	proj, err := testClient.CreateProject(context.Background(), project)
 	if err != nil {
 		t.Fatalf("Failed to created project: %s", err.Error())

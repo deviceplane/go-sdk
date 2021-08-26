@@ -88,7 +88,7 @@ func (c *Client) CreateProject(ctx context.Context, name string) (*Project, erro
 
 func (c *Client) CreateRegistrationToken(ctx context.Context, projectID string, token RegistrationToken) (*DeviceRegistrationToken, error) {
 	var response DeviceRegistrationToken
-	if err := c.post(ctx, token, &response, getRegistrationTokensURL(projectID)); err != nil {
+	if err := c.post(ctx, token, &response, getRegistrationTokensURL(projectID)...); err != nil {
 		return nil, err
 	}
 	return &response, nil
@@ -96,7 +96,7 @@ func (c *Client) CreateRegistrationToken(ctx context.Context, projectID string, 
 
 func (c *Client) CreateServiceAccount(ctx context.Context, projectID string, serviceAccount ServiceAccountCreate) (*ServiceAccount, error) {
 	var response ServiceAccount
-	if err := c.post(ctx, serviceAccount, &response, getServiceAccountsURL(projectID)); err != nil {
+	if err := c.post(ctx, serviceAccount, &response, getServiceAccountsURL(projectID)...); err != nil {
 		return nil, err
 	}
 	return &response, nil
@@ -104,7 +104,7 @@ func (c *Client) CreateServiceAccount(ctx context.Context, projectID string, ser
 
 func (c *Client) CreateAccessKey(ctx context.Context, projectID, serviceAccountID string) (*ServiceAccountAccessKeyWithValue, error) {
 	var response ServiceAccountAccessKeyWithValue
-	if err := c.post(ctx, response, &response, getAccessKeysURL(projectID, serviceAccountID)); err != nil {
+	if err := c.post(ctx, response, &response, getAccessKeysURL(projectID, serviceAccountID)...); err != nil {
 		return nil, err
 	}
 	return &response, nil
@@ -112,7 +112,7 @@ func (c *Client) CreateAccessKey(ctx context.Context, projectID, serviceAccountI
 
 func (c *Client) CreateRole(ctx context.Context, projectID string, role *RoleCreate) (*Role, error) {
 	var response Role
-	if err := c.post(ctx, *role, &response, getRolesURL(projectID)); err != nil {
+	if err := c.post(ctx, *role, &response, getRolesURL(projectID)...); err != nil {
 		return nil, err
 	}
 	return &response, nil
@@ -120,7 +120,7 @@ func (c *Client) CreateRole(ctx context.Context, projectID string, role *RoleCre
 
 func (c *Client) CreateRoleBinding(ctx context.Context, projectID, serviceAccountID, roleID string) (*ServiceAccountRoleBinding, error) {
 	var response ServiceAccountRoleBinding
-	if err := c.post(ctx, response, &response, getBindingURL(projectID, serviceAccountID, roleID)); err != nil {
+	if err := c.post(ctx, response, &response, getBindingURL(projectID, serviceAccountID, roleID)...); err != nil {
 		return nil, err
 	}
 	return &response, nil
@@ -318,23 +318,24 @@ func getURL(u *url.URL, s ...string) string {
 	return strings.Join(append([]string{u.String()}, s...), "/")
 }
 
-func getRegistrationTokensURL(projectID string) string {
-	return fmt.Sprintf("%s/%s/deviceregistrationtokens", projectsURL, projectID)
+func getRegistrationTokensURL(projectID string) []string {
+	return []string{projectsURL, projectID, "deviceregistrationtokens"}
 }
 
-func getServiceAccountsURL(projectID string) string {
-	return fmt.Sprintf("%s/%s/serviceaccounts", projectsURL, projectID)
+func getServiceAccountsURL(projectID string) []string {
+	return []string{projectsURL, projectID, "serviceaccounts"}
 }
 
-func getAccessKeysURL(project, serviceAccount string) string {
-	return fmt.Sprintf("%s/%s/serviceaccountaccesskeys", getServiceAccountsURL(project), serviceAccount)
+func getAccessKeysURL(project, serviceAccount string) []string {
+	svcAccURL := getServiceAccountsURL(project)
+	return append(svcAccURL, serviceAccount, "serviceaccountaccesskeys")
 }
 
-func getRolesURL(projectID string) string {
-	return fmt.Sprintf("%s/%s/roles", projectsURL, projectID)
+func getRolesURL(projectID string) []string {
+	return []string{projectsURL, projectID, "roles"}
 }
 
-func getBindingURL(projectID, serviceAccountID, roleID string) string {
+func getBindingURL(projectID, serviceAccountID, roleID string) []string {
 	svcAccURL := getServiceAccountsURL(projectID)
-	return fmt.Sprintf("%s/%s/roles/%s/serviceaccountrolebindings", svcAccURL, serviceAccountID, roleID)
+	return append(svcAccURL, serviceAccountID, "roles", roleID, "serviceaccountrolebindings")
 }

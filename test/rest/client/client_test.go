@@ -179,11 +179,12 @@ func TestRegisterDevice(t *testing.T) {
 	regDevResp, err := testClient.RegisterDevice(context.Background(), projectID, regToken)
 	if err != nil {
 		t.Errorf("Failed to register device: %s", err.Error())
+	} else {
+		devID = regDevResp.DeviceID
 	}
-	devID = regDevResp.DeviceID
 }
 
-func TestDeleteDevice( t *testing.T) {
+func TestDeleteDevice(t *testing.T) {
 	err := testClient.DeleteDevice(context.Background(), projectID, devID)
 	if err != nil {
 		t.Errorf("Failed to delete device: %s", err.Error())

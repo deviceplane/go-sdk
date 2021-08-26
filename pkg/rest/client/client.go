@@ -186,6 +186,14 @@ func (c *Client) RegisterDevice(ctx context.Context, projectID, registrationToke
 	return &registerDeviceResponse, nil
 }
 
+func (c *Client) DeleteDevice(ctx context.Context, project, deviceID string) error {
+	err := c.delete(ctx, nil, "projects", project, "devices", deviceID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) get(ctx context.Context, out interface{}, s ...string) error {
 	req, err := http.NewRequestWithContext(ctx, "GET", getURL(c.url, s...), nil)
 	if err != nil {

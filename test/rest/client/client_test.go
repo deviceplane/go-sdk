@@ -16,6 +16,8 @@ var (
 	email      string
 	project    string
 	projectID  string
+	regToken   string
+	devID      string
 )
 
 const (
@@ -169,6 +171,22 @@ func TestCreateRBACResources(t *testing.T) {
 	if accessKeyResp == nil {
 		t.Error("accessKeyResp is nil")
 		return
+	}
+	regToken = tokenResp.ID
+}
+
+func TestRegisterDevice(t *testing.T) {
+	regDevResp, err := testClient.RegisterDevice(context.Background(), projectID, regToken)
+	if err != nil {
+		t.Errorf("Failed to register device: %s", err.Error())
+	}
+	devID = regDevResp.DeviceID
+}
+
+func TestDeleteDevice( t *testing.T) {
+	err := testClient.DeleteDevice(context.Background(), projectID, devID)
+	if err != nil {
+		t.Errorf("Failed to delete device: %s", err.Error())
 	}
 }
 

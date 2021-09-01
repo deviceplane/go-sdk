@@ -25,12 +25,13 @@ func (c *Client) SSH(ctx context.Context, project, deviceID string) (net.Conn, e
 
 	req.SetBasicAuth(c.accessKey, "")
 
-	// Caller must close
-	wsConn, _, err := websocket.DefaultDialer.Dial(getWebsocketURL(c.url, projectsURL, project, devicesURL, deviceID, sshURL), req.Header) // nolint:bodyclose
+	return newConnection(websocket.DefaultDialer.Dial(getWebsocketURL(c.url, projectsURL, project, devicesURL, deviceID, sshURL), req.Header))
+}
+
+func newConnection(wsConn *websocket.Conn, resp *http.Response, err error) (net.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return wsconnadapter.New(wsConn), nil
 }
 

@@ -25,7 +25,8 @@ func (c *Client) SSH(ctx context.Context, project, deviceID string) (net.Conn, e
 
 	req.SetBasicAuth(c.accessKey, "")
 
-	return newConnection(websocket.DefaultDialer.Dial(getWebsocketURL(c.url, projectsURL, project, devicesURL, deviceID, sshURL), req.Header))
+	wsURL := []string{projectsURL, project, devicesURL, deviceID, sshURL}
+	return newConnection(websocket.DefaultDialer.Dial(getWebsocketURL(c.url, wsURL...), req.Header))
 }
 
 func newConnection(wsConn *websocket.Conn, resp *http.Response, err error) (net.Conn, error) {

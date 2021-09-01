@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/deviceplane/go-sdk/pkg/rest/client"
+	"github.com/deviceplane/go-sdk/pkg/client"
 )
 
 var (

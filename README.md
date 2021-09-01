@@ -2,10 +2,10 @@
 
 Set of Go packages for interacting with Deviceplane components.
 
-#### REST Client Package
+#### REST/Websocket Client Package
 
-Found in `pkg/rest/client`.
+Found in `pkg/client`.
 
-Client for interacting with Deviceplane Controller REST API.
+Client for interacting with Deviceplane Controller REST API and SSHing to devices via Websockets.
 
-See `test/rest/client/client_test.go` for usage examples.
+See `test/client/client_test.go` for usage examples.

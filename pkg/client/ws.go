@@ -15,8 +15,8 @@ const (
 	sshURL = "ssh"
 )
 
-// SSH establishes a long-lived SSH connection to the device
-// via websockets
+// SSH provices a connection for a long-lived SSH connection to the device
+// via websockets. The returned connection must be closed be the caller
 func (c *Client) SSH(ctx context.Context, project, deviceID string) (net.Conn, error) {
 	req, err := http.NewRequestWithContext(ctx, "", "", nil)
 	if err != nil {
@@ -25,7 +25,8 @@ func (c *Client) SSH(ctx context.Context, project, deviceID string) (net.Conn, e
 
 	req.SetBasicAuth(c.accessKey, "")
 
-	wsConn, _, err := websocket.DefaultDialer.Dial(getWebsocketURL(c.url, projectsURL, project, devicesURL, deviceID, sshURL), req.Header)
+	// Caller must close
+	wsConn, _, err := websocket.DefaultDialer.Dial(getWebsocketURL(c.url, projectsURL, project, devicesURL, deviceID, sshURL), req.Header) // nolint:bodyclose
 	if err != nil {
 		return nil, err
 	}

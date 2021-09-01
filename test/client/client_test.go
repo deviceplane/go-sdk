@@ -112,8 +112,8 @@ func TestCreateProject(t *testing.T) {
 func TestCreateRBACResources(t *testing.T) {
 	// Registration Token
 	tokenReq := client.RegistrationToken{
-		Name:        randomString(10),
-		Description: "default",
+		Name:             randomString(10),
+		Description:      "default",
 		MaxRegistrations: 10,
 	}
 	tokenResp, err := testClient.CreateRegistrationToken(context.Background(), projectID, tokenReq)

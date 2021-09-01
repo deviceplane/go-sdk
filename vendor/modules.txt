@@ -1,0 +1,6 @@
+# github.com/function61/holepunch-server v0.0.0-20210312073819-8f5e8775e813
+## explicit
+github.com/function61/holepunch-server/pkg/wsconnadapter
+# github.com/gorilla/websocket v1.4.2
+## explicit
+github.com/gorilla/websocket

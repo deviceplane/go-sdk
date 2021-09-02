@@ -15,7 +15,7 @@ const (
 	sshURL = "ssh"
 )
 
-// SSH provices a connection for a long-lived SSH connection to the device
+// SSH provides a connection for a long-lived SSH connection to the device
 // via websockets. The returned connection must be closed be the caller
 func (c *Client) SSH(ctx context.Context, project, deviceID string) (net.Conn, error) {
 	req, err := http.NewRequestWithContext(ctx, "", "", nil)

@@ -20,7 +20,6 @@ func New(endpoint *url.URL) *Client {
 	}
 }
 
-// SetAccessKey is only required for SSH functionality
 func (c *Client) SetAccessKey(accessKey string) {
 	c.accessKey = accessKey
 }

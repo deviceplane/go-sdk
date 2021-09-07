@@ -185,6 +185,12 @@ func TestRegisterDevice(t *testing.T) {
 	}
 }
 
+func TestUpdateDevice(t *testing.T) {
+	_, err := testClient.UpdateDevice(context.Background(), projectID, devID, client.UpdateDeviceRequest{Name: randomString(20)})
+	if err != nil {
+		t.Errorf("Failed to update device: %s", err.Error())
+	}
+}
 func TestDeleteDevice(t *testing.T) {
 	err := testClient.DeleteDevice(context.Background(), projectID, devID)
 	if err != nil {

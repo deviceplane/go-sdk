@@ -173,8 +173,18 @@ func (c *Client) RegisterDevice(ctx context.Context, projectID, registrationToke
 	return &registerDeviceResponse, nil
 }
 
-func (c *Client) DeleteDevice(ctx context.Context, project, deviceID string) error {
-	err := c.delete(ctx, nil, "projects", project, "devices", deviceID)
+func (c *Client) UpdateDevice(ctx context.Context, projectID, deviceID string, req UpdateDeviceRequest) (*Device, error) {
+	var deviceResponse Device
+	err := c.patch(ctx, req, deviceResponse, "projects", projectID, "devices", deviceID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &deviceResponse, nil
+}
+
+func (c *Client) DeleteDevice(ctx context.Context, projectID, deviceID string) error {
+	err := c.delete(ctx, nil, "projects", projectID, "devices", deviceID)
 	if err != nil {
 		return err
 	}
@@ -191,50 +201,57 @@ func (c *Client) get(ctx context.Context, out interface{}, s ...string) error {
 }
 
 func (c *Client) delete(ctx context.Context, in interface{}, s ...string) error {
-	reqBytes := []byte{}
-	if in != nil {
-		switch v := in.(type) {
-		case string:
-			reqBytes = []byte(v)
-		default:
-			var err error
-			reqBytes, err = json.Marshal(in)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	reader := bytes.NewReader(reqBytes)
-	req, err := http.NewRequestWithContext(ctx, "DELETE", getURL(c.url, s...), reader)
+	req, err := c.getRequest(ctx, http.MethodDelete, in, s...)
 	if err != nil {
 		return err
 	}
-
 	return c.performRequest(req, nil)
 }
 
 func (c *Client) post(ctx context.Context, in, out interface{}, s ...string) error {
-	var reqBytes []byte
-
-	switch v := in.(type) {
-	case string:
-		reqBytes = []byte(v)
-	default:
-		var err error
-		reqBytes, err = json.Marshal(in)
-		if err != nil {
-			return err
-		}
-	}
-
-	reader := bytes.NewReader(reqBytes)
-
-	req, err := http.NewRequestWithContext(ctx, "POST", getURL(c.url, s...), reader)
+	req, err := c.getRequest(ctx, http.MethodPost, in, s...)
 	if err != nil {
 		return err
 	}
-
 	return c.performRequest(req, out)
+}
+
+func (c *Client) patch(ctx context.Context, in, out interface{}, s ...string) error {
+	req, err := c.getRequest(ctx, http.MethodPatch, in, s...)
+	if err != nil {
+		return err
+	}
+	return c.performRequest(req, out)
+}
+
+func (c *Client) getRequest(ctx context.Context, method string, in interface{}, s ...string) (*http.Request, error) {
+	// Read input
+	reqBytes, err := getRequestBytes(in)
+	if err != nil {
+		return nil, err
+	}
+	reader := bytes.NewReader(reqBytes)
+
+	// Create request
+	req, err := http.NewRequestWithContext(ctx, method, getURL(c.url, s...), reader)
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+func getRequestBytes(in interface{}) (out []byte, err error) {
+	switch v := in.(type) {
+	case string:
+		out = []byte(v)
+	default:
+		out, err = json.Marshal(in)
+		if err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
 }
 
 func (c *Client) performRequest(req *http.Request, out interface{}) error {

@@ -247,3 +247,7 @@ type RegisterDeviceResponse struct {
 	DeviceID             string `json:"deviceId"`
 	DeviceAccessKeyValue string `json:"deviceAccessKeyValue"`
 }
+
+type UpdateDeviceRequest struct {
+	Name string `json:"name"`
+}

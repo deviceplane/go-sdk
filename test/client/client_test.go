@@ -185,10 +185,34 @@ func TestRegisterDevice(t *testing.T) {
 	}
 }
 
+func getDevice(t *testing.T) *client.Device {
+	getDev, err := testClient.GetDevice(context.Background(), projectID, devID)
+	if err != nil {
+		t.Errorf("Failed to get device: %s", err.Error())
+	}
+	if getDev == nil {
+		t.Errorf("Device is nil from get device")
+		return nil
+	}
+	if getDev.ID != devID {
+		t.Errorf("Expected {%s} device id does not match found {%s}", devID, getDev.ID)
+	}
+	return getDev
+}
+
+func TestGetDevice(t *testing.T) {
+	_ = getDevice(t)
+}
+
 func TestUpdateDevice(t *testing.T) {
-	_, err := testClient.UpdateDevice(context.Background(), projectID, devID, client.UpdateDeviceRequest{Name: randomString(20)})
+	newName := randomString(20)
+	_, err := testClient.UpdateDevice(context.Background(), projectID, devID, client.UpdateDeviceRequest{Name: newName})
 	if err != nil {
 		t.Errorf("Failed to update device: %s", err.Error())
+	}
+	getDev := getDevice(t)
+	if getDev.Name != newName {
+		t.Errorf("Expected {%s} device name does not match found {%s}", newName, getDev.Name)
 	}
 }
 func TestDeleteDevice(t *testing.T) {
